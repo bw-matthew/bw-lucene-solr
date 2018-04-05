@@ -77,7 +77,7 @@ public class CompressedIndexInput extends BufferedIndexInput {
     int read = decompressed.read(b, offset, length);
     if (read != length) {
       // This MUST read length bytes into the target buffer
-      throw new IOException("Could not read " + length + " bytes, only managed to read " + read + " bytes");
+      throw new EOFException();
     }
   }
 
