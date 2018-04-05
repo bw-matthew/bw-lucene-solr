@@ -222,7 +222,7 @@ public class HdfsDirectory extends BaseDirectory {
     
     @Override
     protected void seekInternal(long pos) throws IOException {
-
+      inputStream.seek(pos);
     }
     
     @Override
