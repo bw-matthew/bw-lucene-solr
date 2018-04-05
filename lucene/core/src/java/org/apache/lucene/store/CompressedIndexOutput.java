@@ -25,7 +25,7 @@ import java.util.zip.GZIPOutputStream;
  * The position data is reported over the file as if it were uncompressed.
  * The length of the original data is stored as a footer which is written as the index is closed.
  */
-public abstract class CompressedIndexOutput extends OutputStreamIndexOutput {
+public class CompressedIndexOutput extends OutputStreamIndexOutput {
 
   /** Default buffer size set to {@value #BUFFER_SIZE}. */
   public static final int BUFFER_SIZE = 1024;
@@ -35,7 +35,7 @@ public abstract class CompressedIndexOutput extends OutputStreamIndexOutput {
   /** resourceDescription should be a non-null, opaque string
    *  describing this resource; it's returned from
    *  {@link #toString}. */
-  protected CompressedIndexOutput(IndexOutput output) {
+  public CompressedIndexOutput(IndexOutput output) {
     super("CompressedIndexOutput(" + output.toString() + ")", output.getName(), silentlyWrapStream(output), BUFFER_SIZE);
     this.output = output;
   }

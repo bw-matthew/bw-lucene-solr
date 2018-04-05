@@ -16,6 +16,7 @@
  */
 package org.apache.lucene.store;
 
+import java.io.EOFException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
@@ -34,7 +35,7 @@ public class CompressedIndexInput extends BufferedIndexInput {
   /** resourceDescription should be a non-null, opaque string
    *  describing this resource; it's returned from
    *  {@link #toString}. */
-  protected CompressedIndexInput(IndexInput input) {
+  public CompressedIndexInput(IndexInput input) {
     super("CompressedIndexInput(" + input.toString() + ")");
     this.input = input;
 
