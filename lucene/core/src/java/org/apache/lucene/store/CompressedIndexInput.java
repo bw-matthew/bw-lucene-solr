@@ -85,9 +85,7 @@ public class CompressedIndexInput extends BufferedIndexInput {
    * next {@link #readInternal(byte[],int,int)} will occur.
    * @see #readInternal(byte[],int,int)
    */
-  protected void seekInternal(long pos) throws IOException {
-    input.seek(pos);
-  }
+  protected void seekInternal(long pos) throws IOException {}
 
   public void close() throws IOException {
     input.close();
