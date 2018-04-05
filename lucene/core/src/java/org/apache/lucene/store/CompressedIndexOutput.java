@@ -22,23 +22,27 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * Extension of IndexOutput, operating over a compressed file.
- * The length and position data is reported over the file as if it were uncompressed.
- * The length of the original data is stored as a footer which is read as the index is created.
+ * The position data is reported over the file as if it were uncompressed.
+ * The length of the original data is stored as a footer which is written as the index is closed.
  */
-public abstract class CompressedIndexOutput extends IndexOutput {
+public abstract class CompressedIndexOutput extends OutputStreamIndexOutput {
+
+  /** Default buffer size set to {@value #BUFFER_SIZE}. */
+  public static final int BUFFER_SIZE = 1024;
 
   private final IndexOutput output;
-  private final OutputStream decompressed;
 
   /** resourceDescription should be a non-null, opaque string
    *  describing this resource; it's returned from
    *  {@link #toString}. */
   protected CompressedIndexOutput(IndexOutput output) {
-    super("CompressedIndexOutput(" + output.toString() + ")", output.getName());
+    super("CompressedIndexOutput(" + output.toString() + ")", output.getName(), silentlyWrapStream(output), BUFFER_SIZE);
     this.output = output;
+  }
 
+  private static OutputStream silentlyWrapStream(IndexOutput output) {
     try {
-      this.decompressed = new GZIPOutputStream(new OutputStreamAdapter(output));
+      return new GZIPOutputStream(new OutputStreamAdapter(output));
     }
     catch (RuntimeException e) {
       throw e;
@@ -48,24 +52,14 @@ public abstract class CompressedIndexOutput extends IndexOutput {
     }
   }
 
-  public void writeByte(byte b) throws IOException {
-    decompressed.write(b);
-  }
-
-  public void writeBytes(byte[] b, int offset, int length) throws IOException {
-    decompressed.write(b, offset, length);
-  }
-
   public void close() throws IOException {
-    output.close();
-  }
+    output.writeLong(getFilePointer());
 
-  public long getFilePointer() {
-
-  }
-
-  public long getChecksum() throws IOException {
-
+    try {
+      super.close();
+    } finally {
+      output.close();
+    }
   }
 
   private static class OutputStreamAdapter extends OutputStream {
